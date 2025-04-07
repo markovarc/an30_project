@@ -1,0 +1,22 @@
+<!-- app/templates/index.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <h1>Учёт работы спецтехники</h1>
+    <table>
+        <tr>
+            <th>Техника</th>
+            <th>Действия</th>
+        </tr>
+        {% for m in machines %}
+        <tr>
+            <td>{{ m[1] }}</td>
+            <td>
+                <a class="btn" href="/calendar/{{ m[0] }}">📅 Календарь</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

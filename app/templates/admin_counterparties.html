@@ -1,0 +1,47 @@
+<!-- app/templates/admin_counterparties.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<a href="/admin" class="btn back-btn">← Назад</a>
+<div class="card">
+    <h2>Управление контрагентами</h2>
+
+    {% if cparty_edit %}
+    <h3>Редактировать контрагента</h3>
+    <form method="POST">
+        <input type="text" name="name" value="{{ cparty_edit[1] }}" required>
+        <button type="submit" class="btn">Сохранить</button>
+    </form>
+    {% else %}
+    <form method="POST" style="margin-bottom:1rem;">
+        <input type="text" name="name" placeholder="Название контрагента" required>
+        <button type="submit" class="btn">Добавить</button>
+    </form>
+    {% endif %}
+
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Название</th>
+            <th>Действия</th>
+        </tr>
+        {% if cparties %}
+            {% for cp in cparties %}
+            <tr>
+                <td>{{ cp[0] }}</td>
+                <td>{{ cp[1] }}</td>
+                <td class="action-buttons">
+                    <a href="/edit/counterparty/{{ cp[0] }}" class="btn">Редактировать</a>
+                    <form method="POST" action="/delete/counterparty/{{ cp[0] }}">
+                        <button type="submit" class="btn btn-danger"
+                         onclick="return confirmDelete('Удалить контрагента {{ cp[1] }}?')">
+                            Удалить
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        {% endif %}
+    </table>
+</div>
+{% endblock %}

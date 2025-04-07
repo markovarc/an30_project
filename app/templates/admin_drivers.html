@@ -1,0 +1,47 @@
+<!-- app/templates/admin_drivers.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<a href="/admin" class="btn back-btn">← Назад</a>
+<div class="card">
+    <h2>Управление водителями</h2>
+
+    {% if driver_edit %}
+    <h3>Редактировать водителя</h3>
+    <form method="POST">
+        <input type="text" name="name" value="{{ driver_edit[1] }}" required>
+        <button type="submit" class="btn">Сохранить</button>
+    </form>
+    {% else %}
+    <form method="POST" style="margin-bottom:1rem;">
+        <input type="text" name="name" placeholder="ФИО водителя" required>
+        <button type="submit" class="btn">Добавить</button>
+    </form>
+    {% endif %}
+
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Имя</th>
+            <th>Действия</th>
+        </tr>
+        {% if drivers %}
+            {% for d in drivers %}
+            <tr>
+                <td>{{ d[0] }}</td>
+                <td>{{ d[1] }}</td>
+                <td class="action-buttons">
+                    <a href="/edit/driver/{{ d[0] }}" class="btn">Редактировать</a>
+                    <form method="POST" action="/delete/driver/{{ d[0] }}">
+                        <button type="submit" class="btn btn-danger"
+                            onclick="return confirmDelete('Удалить водителя {{ d[1] }}?')">
+                            Удалить
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        {% endif %}
+    </table>
+</div>
+{% endblock %}

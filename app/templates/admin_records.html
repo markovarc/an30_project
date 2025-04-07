@@ -1,0 +1,210 @@
+<!-- app/templates/admin_records.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<a href="/admin" class="btn back-btn">← Назад</a>
+<div style="display:flex;align-items:flex-start;gap:1rem;flex-wrap:wrap;">
+
+    <!-- Левая колонка: форма добавления + таблица записей -->
+    <div style="flex:1;min-width:400px;">
+
+        <div class="card">
+            <h2>Добавить новую запись</h2>
+            <form method="POST">
+                <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;">
+                    <input type="date" name="date" required>
+                    
+                    <select name="machine_id" required>
+                        <option value="">Выберите технику</option>
+                        {% for m in machines %}
+                        <option value="{{ m[0] }}">{{ m[1] }}</option>
+                        {% endfor %}
+                    </select>
+                    
+                    <select name="driver_id" required>
+                        <option value="">Выберите водителя</option>
+                        {% for d in drivers %}
+                        <option value="{{ d[0] }}">{{ d[1] }}</option>
+                        {% endfor %}
+                    </select>
+                    
+                    <select name="status" required>
+                        <option value="work">Работа</option>
+                        <option value="stop">Простой</option>
+                        <option value="repair">Ремонт</option>
+                        <option value="holiday">Выходной</option>
+                    </select>
+
+                    <input type="time" name="start_time">
+                    <input type="time" name="end_time">
+
+                    <select name="counterparty_id">
+                        <option value="">Контрагент (не обязательно)</option>
+                        {% for c in cparties %}
+                        <option value="{{ c[0] }}">{{ c[1] }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <input type="text" name="comment" placeholder="Комментарий" style="grid-column:span 2;">
+                </div>
+                <button type="submit" class="btn" style="width:100%;margin-top:1rem;">Добавить запись</button>
+            </form>
+        </div>
+
+        <div class="card" style="margin-top:1rem;">
+            <h2>Список записей</h2>
+            <table style="margin-top:1rem;">
+                <tr>
+                    <th onclick="sortBy('date')">Дата</th>
+                    <th onclick="sortBy('machine')">Техника</th>
+                    <th onclick="sortBy('driver')">Водитель</th>
+                    <th>Время</th>
+                    <th onclick="sortBy('hours')">Часы</th>
+                    <th>Контрагент</th>
+                    <th>Комментарий</th>
+                    <th onclick="sortBy('status')">Статус</th>
+                    <th>Действия</th>
+                </tr>
+                {% for r in records %}
+                {% set rec_id = r[0] %}
+                {% set date_db = r[1] %}
+                {% set machine_nm = r[2] %}
+                {% set driver_nm = r[3] %}
+                {% set st = r[4] or "" %}
+                {% set en = r[5] or "" %}
+                {% set hrs = r[6] or 0 %}
+                {% set comm = r[7] or "" %}
+                {% set cpar = r[8] %}
+                {% set stat_ = r[9] %}
+                
+                {# Преобразуем дату #}
+                {% set date_fmt = date_db %}
+                {% if date_db|length == 10 %}
+                    {# Пытаемся парсить YYYY-MM-DD #}
+                    {% set dt = date_db.split('-') %}
+                    {% if dt|length == 3 %}
+                        {% set date_fmt = dt[2] ~ '.' ~ dt[1] ~ '.' ~ dt[0] %}
+                    {% endif %}
+                {% endif %}
+                
+                {% set time_str = st ~ " - " ~ en if st and en else "-" %}
+                {% set color_ = COLORS['status'][stat_] if stat_ in COLORS['status'] else "#fff" %}
+                
+                <tr>
+                    <td>{{ date_fmt }}</td>
+                    <td>{{ machine_nm }}</td>
+                    <td>{{ driver_nm }}</td>
+                    <td>{{ time_str }}</td>
+                    <td>{{ hrs }}</td>
+                    <td>{{ cpar }}</td>
+                    <td>{{ comm if comm else "-" }}</td>
+                    <td>
+                        <div class="status" style="background:{{ color_ }};">
+                            {{ stat_.capitalize() }}
+                        </div>
+                    </td>
+                    <td class="action-buttons">
+                        <a href="/edit/record/{{ rec_id }}" class="btn">Редактировать</a>
+                        <form method="POST" action="/delete/record/{{ rec_id }}">
+                            <button type="submit" class="btn btn-danger"
+                                onclick="return confirmDelete('Удалить запись?')">
+                                Удалить
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+
+            {# Пагинация #}
+            {% if total_pages > 1 %}
+            <div class="pagination">
+                {% if page > 1 %}
+                <a class="btn" href="?{{ request.query_string|safe|replace('page='~page, 'page='~(page-1)) }}">←</a>
+                {% else %}
+                <span>←</span>
+                {% endif %}
+                
+                <span>Стр. {{ page }}/{{ total_pages }}</span>
+                
+                {% if page < total_pages %}
+                    {% if 'page=' in request.query_string|safe %}
+                    <a class="btn" href="?{{ request.query_string|safe|replace('page='~page, 'page='~(page+1)) }}">→</a>
+                    {% else %}
+                    <a class="btn" href="?{{ request.query_string|safe }}&page={{ page+1 }}">→</a>
+                    {% endif %}
+                {% else %}
+                <span>→</span>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Правая колонка: Фильтры -->
+    <div style="width:300px;flex-shrink:0;">
+        <div class="card" style="margin-bottom:1rem;">
+            <h2>Фильтры</h2>
+            <form method="GET" style="flex-direction:column;gap:0.5rem;">
+                <label>Дата с:</label>
+                <input type="date" name="date_from" value="{{ date_from }}">
+                
+                <label>Дата по:</label>
+                <input type="date" name="date_to" value="{{ date_to }}">
+                
+                <label>Техника:</label>
+                <select name="mach">
+                    <option value="">[Все]</option>
+                    {% for m in machines %}
+                    <option value="{{ m[0] }}" {% if mach_f == m[0] %}selected{% endif %}>{{ m[1] }}</option>
+                    {% endfor %}
+                </select>
+                
+                <label>Водитель:</label>
+                <select name="driv">
+                    <option value="">[Все]</option>
+                    {% for d in drivers %}
+                    <option value="{{ d[0] }}" {% if driv_f == d[0] %}selected{% endif %}>{{ d[1] }}</option>
+                    {% endfor %}
+                </select>
+                
+                <label>Контрагент:</label>
+                <select name="cpar">
+                    <option value="">[Все]</option>
+                    {% for c in cparties %}
+                    <option value="{{ c[0] }}" {% if cpar_f == c[0] %}selected{% endif %}>{{ c[1] }}</option>
+                    {% endfor %}
+                </select>
+                
+                <label>Статус:</label>
+                <select name="status">
+                    <option value="">[Все]</option>
+                    <option value="work"    {% if stat_f == 'work'    %}selected{% endif %}>Работа</option>
+                    <option value="stop"    {% if stat_f == 'stop'    %}selected{% endif %}>Простой</option>
+                    <option value="repair"  {% if stat_f == 'repair'  %}selected{% endif %}>Ремонт</option>
+                    <option value="holiday" {% if stat_f == 'holiday' %}selected{% endif %}>Выходной</option>
+                </select>
+                
+                <label>Комментарий (поиск):</label>
+                <input type="text" name="comment_sub" value="{{ comm_sub }}">
+                
+                <button type="submit" class="btn" style="margin-top:1rem;">Применить</button>
+                
+                <a class="btn" 
+                   href="/export?export=filtered
+                     &date_from={{ date_from }}
+                     &date_to={{ date_to }}
+                     &mach={{ mach_f or '' }}
+                     &driv={{ driv_f or '' }}
+                     &cpar={{ cpar_f or '' }}
+                     &status={{ stat_f }}
+                     &comment_sub={{ comm_sub }}
+                     &sort={{ sort_key }}">
+                    Экспорт
+                </a>
+            </form>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

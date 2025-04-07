@@ -1,0 +1,140 @@
+/* app/static/style.css */
+
+/* Общие стили, перенесённые из кода */
+* {
+    box-sizing:border-box;
+    margin:0; 
+    padding:0;
+}
+body {
+    font-family:'Segoe UI', sans-serif;
+    background:#F5F7FA; /* COLORS['background'] */
+    color:#6C7A89;      /* COLORS['primary'] */
+}
+.header {
+    background:#6C7A89; /* COLORS['primary'] */
+    padding:1rem;
+    box-shadow:0 2px 5px rgba(0,0,0,0.1);
+}
+.nav {
+    max-width:1200px;
+    margin:0 auto;
+    display:flex;
+    gap:1rem;
+}
+.nav a {
+    color:white;
+    text-decoration:none;
+    padding:0.5rem 1rem;
+    border-radius:4px;
+    transition:0.3s;
+    font-weight:bold;
+}
+.nav a:hover {
+    background:#95A5A6; /* COLORS['secondary'] */
+}
+.container {
+    max-width:1200px;
+    margin:2rem auto;
+    padding:0 1rem;
+}
+.card {
+    background:white;
+    border-radius:8px;
+    padding:1.5rem;
+    box-shadow:0 2px 5px rgba(0,0,0,0.05);
+    margin-bottom:1rem;
+}
+table {
+    width:100%;
+    border-collapse:collapse;
+    margin-top:1rem;
+}
+th, td {
+    padding:1rem;
+    text-align:left;
+    border-bottom:1px solid #eee;
+}
+th {
+    background:#6C7A89; /* COLORS['primary'] */
+    color:white;
+    cursor:pointer;
+}
+.status {
+    display:inline-block;
+    padding:0.25rem 0.75rem;
+    border-radius:1rem;
+    font-size:0.9em;
+}
+.btn {
+    background:#4A90E2; /* COLORS['accent'] */
+    color:white;
+    padding:0.5rem 1rem;
+    border:none;
+    border-radius:4px;
+    cursor:pointer;
+    transition:0.3s;
+    font-weight:bold;
+    margin:0 0.25rem 0.25rem 0;
+}
+.btn-danger {
+    background:#ff4444 !important; /* COLORS['danger'] */
+}
+.btn:hover {
+    opacity:0.9;
+}
+.back-btn {
+    background:#95A5A6; /* COLORS['secondary'] */
+    margin:1rem 0;
+}
+form {
+    display:flex;
+    gap:1rem;
+    flex-wrap:wrap;
+}
+input, select {
+    padding:0.5rem;
+    border:1px solid #ddd;
+    border-radius:4px;
+    min-width:150px;
+}
+.action-buttons {
+    display:inline-flex;
+    gap:0.5rem;
+}
+.pagination {
+    margin-top:1rem;
+    display:flex;
+    gap:0.5rem;
+}
+.pagination span {
+    padding:0.5rem 1rem;
+}
+.calendar-grid {
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    gap:0.5rem;
+    margin-top:1rem;
+}
+.calendar-day {
+    background:white;
+    padding:1rem;
+    border-radius:8px;
+    min-height:120px;
+    box-shadow:0 1px 3px rgba(0,0,0,0.1);
+}
+.calendar-header {
+    display:flex;
+    align-items:center;
+    gap:1rem;
+    flex-wrap:wrap;
+    margin-top:1rem;
+}
+.calendar-header h1 {
+    margin:0;
+    font-size:1.5rem;
+}
+.calendar-nav-btns {
+    display:inline-flex;
+    gap:1rem;
+}

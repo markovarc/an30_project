@@ -1,0 +1,14 @@
+<!-- app/templates/admin.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <h1>Административная панель</h1>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;">
+        <a class="btn" href="/admin/machines">🚜 Техника</a>
+        <a class="btn" href="/admin/drivers">👤 Водители</a>
+        <a class="btn" href="/admin/counterparties">🏢 Контрагенты</a>
+        <a class="btn" href="/admin/records">📅 Записи</a>
+    </div>
+</div>
+{% endblock %}

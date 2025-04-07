@@ -1,0 +1,52 @@
+<!-- app/templates/calendar.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<a href="/" class="btn back-btn">← Назад</a>
+<div class="card">
+    <div class="calendar-header">
+        <div style="flex:1;">
+            <h1 style="margin-bottom:0;">{{ machine[1] }}</h1>
+            <div style="font-size:1rem;color:{{ COLORS.secondary }};">
+                {{ year }}-{{ "%02d"|format(month) }}
+            </div>
+        </div>
+        <div class="calendar-nav-btns">
+            <a class="btn" href="/calendar/{{ machine[0] }}?year={{ prev_year }}&month={{ prev_month }}">
+                ← Пред. месяц
+            </a>
+            <a class="btn" href="/calendar/{{ machine[0] }}?year={{ next_year }}&month={{ next_month }}">
+                След. месяц →
+            </a>
+        </div>
+    </div>
+
+    <div class="calendar-grid">
+        {% for d in dates %}
+        {% set day_data = recs_dict[d.date()] %}
+        <div class="calendar-day">
+            <div style="font-weight:bold;margin-bottom:0.5rem;">
+                {{ d.strftime("%d.%m") }}
+            </div>
+            {% for row in day_data %}
+            {% set driver_ = row[0] %}
+            {% set status_ = row[1] %}
+            {% set st = row[2] %}
+            {% set en = row[3] %}
+            {% set cpar = row[4] %}
+            
+            {% set color_ = COLORS['status'][status_] if status_ in COLORS['status'] else "#fff" %}
+            <div class="status" style="background:{{ color_ }};margin-bottom:0.5rem;">
+                {{ driver_ }} - {{ status_.capitalize() }}<br>
+                {% if st and en %}
+                {{ st }} - {{ en }}
+                <br>
+                {% endif %}
+                {{ cpar }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

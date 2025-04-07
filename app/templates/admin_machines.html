@@ -1,0 +1,48 @@
+<!-- app/templates/admin_machines.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<a href="/admin" class="btn back-btn">← Назад</a>
+<div class="card">
+    <h2>Управление техникой</h2>
+
+    {# Если мы редактируем - показываем форму редактирования, иначе - форму добавления #}
+    {% if machine_edit %}
+    <h3>Редактировать технику</h3>
+    <form method="POST">
+        <input type="text" name="name" value="{{ machine_edit[1] }}" required>
+        <button type="submit" class="btn">Сохранить</button>
+    </form>
+    {% else %}
+    <form method="POST" style="margin-bottom:1rem;">
+        <input type="text" name="name" placeholder="Название техники" required>
+        <button type="submit" class="btn">Добавить</button>
+    </form>
+    {% endif %}
+
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Название</th>
+            <th>Действия</th>
+        </tr>
+        {% if machines %}
+            {% for m in machines %}
+            <tr>
+                <td>{{ m[0] }}</td>
+                <td>{{ m[1] }}</td>
+                <td class="action-buttons">
+                    <a href="/edit/machine/{{ m[0] }}" class="btn">Редактировать</a>
+                    <form method="POST" action="/delete/machine/{{ m[0] }}">
+                        <button type="submit" class="btn btn-danger"
+                            onclick="return confirmDelete('Удалить машину {{ m[1] }}?')">
+                            Удалить
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        {% endif %}
+    </table>
+</div>
+{% endblock %}

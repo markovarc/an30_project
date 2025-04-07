@@ -1,0 +1,40 @@
+<!-- app/templates/base.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>АН-30 Учёт</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Подключаем CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header class="header">
+        <nav class="nav">
+            <a href="/">Главная</a>
+            <a href="/admin">Админка</a>
+            <a href="/export">📊 Отчёт (все)</a>
+        </nav>
+    </header>
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+
+    <script>
+        function confirmDelete(msg) {
+            return confirm(msg || 'Вы уверены что хотите удалить запись?');
+        }
+        function sortBy(field) {
+            const url = new URL(window.location.href);
+            let cur = url.searchParams.get('sort');
+            if(cur === field+'_asc') {
+                url.searchParams.set('sort', field+'_desc');
+            } else {
+                url.searchParams.set('sort', field+'_asc');
+            }
+            window.location.href = url.toString();
+        }
+    </script>
+</body>
+</html>

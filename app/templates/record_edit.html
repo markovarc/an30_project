@@ -1,0 +1,66 @@
+<!-- app/templates/record_edit.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<a href="/admin/records" class="btn back-btn">← Назад</a>
+<div class="card">
+    <h2>Редактировать запись</h2>
+
+    {% set date_val  = record[0] %}
+    {% set mach_val  = record[1] %}
+    {% set driv_val  = record[2] %}
+    {% set stat_val  = record[3] %}
+    {% set st_val    = record[4] or "" %}
+    {% set en_val    = record[5] or "" %}
+    {% set hrs_val   = record[6] or 0 %}
+    {% set comm_val  = record[7] or "" %}
+    {% set cpar_val  = record[8] %}
+
+    <form method="POST">
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;">
+            <input type="date" name="date" value="{{ date_val }}" required>
+
+            <select name="machine_id" required>
+                {% for m in machines %}
+                <option value="{{ m[0] }}" {% if m[0] == mach_val %}selected{% endif %}>
+                    {{ m[1] }}
+                </option>
+                {% endfor %}
+            </select>
+
+            <select name="driver_id" required>
+                {% for d in drivers %}
+                <option value="{{ d[0] }}" {% if d[0] == driv_val %}selected{% endif %}>
+                    {{ d[1] }}
+                </option>
+                {% endfor %}
+            </select>
+
+            <select name="status" required>
+                <option value="work"    {% if stat_val == 'work'    %}selected{% endif %}>Работа</option>
+                <option value="stop"    {% if stat_val == 'stop'    %}selected{% endif %}>Простой</option>
+                <option value="repair"  {% if stat_val == 'repair'  %}selected{% endif %}>Ремонт</option>
+                <option value="holiday" {% if stat_val == 'holiday' %}selected{% endif %}>Выходной</option>
+            </select>
+
+            <input type="time" name="start_time" value="{{ st_val }}">
+            <input type="time" name="end_time"   value="{{ en_val }}">
+
+            <select name="counterparty_id">
+                <option value="">(не обязательно)</option>
+                {% for c in cparties %}
+                <option value="{{ c[0] }}" {% if c[0] == cpar_val %}selected{% endif %}>
+                    {{ c[1] }}
+                </option>
+                {% endfor %}
+            </select>
+
+            <input type="text" name="comment" value="{{ comm_val }}" style="grid-column:span 2;">
+        </div>
+
+        <button type="submit" class="btn" style="margin-top:1rem;">
+            Сохранить
+        </button>
+    </form>
+</div>
+{% endblock %}
